@@ -1,14 +1,35 @@
 "use client";
 
-import { LoginForm } from "@/types/auth";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import Cookies from "js-cookie";
+
+import axios from "@/utils/axios";
+import { LoginForm } from "@/types/auth";
+import { useRouter } from "next/navigation";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 export default function LoginForm() {
-    const { register, handleSubmit } = useForm<LoginForm>();
+    const router = useRouter();
+    const {
+        register,
+        handleSubmit,
+        formState: { isSubmitting, isSubmitSuccessful },
+    } = useForm<LoginForm>();
 
     const login = async (data: LoginForm) => {
-        console.log(data);
+        try {
+            const {
+                data: { token },
+            } = await axios.post("/api/auth/login", data);
+
+            Cookies.set("access_token", token);
+
+            router.push("/dashboard");
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (
@@ -63,9 +84,20 @@ export default function LoginForm() {
             </div>
             <button
                 type="submit"
-                className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                className={`w-full text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center ${
+                    isSubmitSuccessful
+                        ? "bg-green-600 hover:bg-green-700 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                        : "bg-primary-600 hover:bg-primary-700 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                }`}
+                disabled={isSubmitting || isSubmitSuccessful}
             >
-                Sign in
+                {isSubmitting ? (
+                    <FontAwesomeIcon icon={faSpinner} spin />
+                ) : isSubmitSuccessful ? (
+                    <FontAwesomeIcon icon={faCheck} />
+                ) : (
+                    "Sign In"
+                )}
             </button>
         </form>
     );
