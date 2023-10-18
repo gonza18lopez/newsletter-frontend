@@ -9,13 +9,15 @@ import { LoginForm } from "@/types/auth";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
 
 export default function LoginForm() {
     const router = useRouter();
+    const [isSubmitSuccessful, setIsSubmitSuccessful] = useState<boolean>(false);
     const {
         register,
         handleSubmit,
-        formState: { isSubmitting, isSubmitSuccessful },
+        formState: { isSubmitting },
     } = useForm<LoginForm>();
 
     const login = async (data: LoginForm) => {
@@ -24,11 +26,19 @@ export default function LoginForm() {
                 data: { token },
             } = await axios.post("/api/auth/login", data);
 
+            if (!token) {
+                throw new Error("Credentials are not valid");
+            }
+
             Cookies.set("access_token", token);
+
+            setIsSubmitSuccessful(true);
 
             router.push("/dashboard");
         } catch (error) {
-            console.error(error);
+            alert("Credentials are not valid");
+
+            return false;
         }
     };
 

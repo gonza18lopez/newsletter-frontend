@@ -1,6 +1,6 @@
 "use client";
 
-import { NewsletterForm } from "@/types/newsletter";
+import { RecipientForm } from "@/types/newsletter";
 import axios from "@/utils/axios";
 import { faCheck, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,9 +12,9 @@ export default function NewsletterForm() {
         register,
         handleSubmit,
         formState: { isSubmitting, isSubmitSuccessful, errors },
-    } = useForm<NewsletterForm>();
+    } = useForm<RecipientForm>();
 
-    const submit = async (data: NewsletterForm) => {
+    const submit = async (data: RecipientForm) => {
         try {
             const response = await axios.post("/api/newsletter", data);
 

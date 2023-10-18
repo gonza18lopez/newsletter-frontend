@@ -1,5 +1,10 @@
+import "@mantine/core/styles.css";
+import '@mantine/notifications/styles.css';
+import '@mantine/dates/styles.css';
 import "@/assets/stylesheets/app.css";
+
 import type { Metadata } from "next";
+import Providers from "@/components/Providers";
 
 export const metadata: Metadata = {
     title: "Newsletter App",
@@ -13,7 +18,11 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body className="antialiased">{children}</body>
+            <body className="antialiased">
+                <Providers>
+                    {children}
+                </Providers>
+            </body>
         </html>
     );
 }

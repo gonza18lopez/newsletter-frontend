@@ -1,7 +1,7 @@
 import Axios from "axios";
 import Cookies from "js-cookie";
 
-const access_token = Cookies.get("starlings:access_token");
+const access_token = Cookies.get("access_token");
 
 const headers: any = {
     "X-Requested-With": "XMLHttpRequest",
