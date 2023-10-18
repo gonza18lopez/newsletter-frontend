@@ -14,7 +14,13 @@ import dayjs from "dayjs";
 import DeleteModal from "../DeleteModal";
 import { useNewsletters } from "@/hooks/newsletter";
 
-export default function NewsletterItem({ id, name, recipients, sendAt, isSent }: any) {
+export default function NewsletterItem({
+    id,
+    name,
+    recipients,
+    sendAt,
+    isSent,
+}: any) {
     const { mutate: updateNewslettersTable } = useNewsletters();
     const [isSending, setIsSending] = useState<boolean>(false);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -36,8 +42,7 @@ export default function NewsletterItem({ id, name, recipients, sendAt, isSent }:
             });
 
             updateNewslettersTable();
-        }
-        catch (error) {
+        } catch (error) {
             console.error(error);
 
             notifications.show({
@@ -49,12 +54,11 @@ export default function NewsletterItem({ id, name, recipients, sendAt, isSent }:
                 icon: <FontAwesomeIcon icon={faWarning} />,
                 color: "red",
             });
-        }
-        finally {
+        } finally {
             setIsDeleting(false);
             setShowDeleteModal(false);
         }
-    }
+    };
 
     const send = async () => {
         setIsSending(true);
@@ -81,9 +85,8 @@ export default function NewsletterItem({ id, name, recipients, sendAt, isSent }:
                 message: "Something went wrong. Please try again.",
                 icon: <FontAwesomeIcon icon={faWarning} />,
                 color: "red",
-            })
-        }
-        finally {
+            });
+        } finally {
             setIsSending(false);
         }
     };
@@ -100,6 +103,8 @@ export default function NewsletterItem({ id, name, recipients, sendAt, isSent }:
             <td className="px-4 py-3">
                 {isSent ? (
                     <span className="text-green-500">Sent</span>
+                ) : !recipients.length ? (
+                    <span className="text-red-500">No recipients</span>
                 ) : (
                     <span>Pending</span>
                 )}
