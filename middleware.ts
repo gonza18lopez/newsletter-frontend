@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 import { getCurrentUser } from "./utils/user";
 
 const onlyAuthenticatedRoutes = ["/dashboard", "/newsletters", "/users"];
@@ -31,8 +31,19 @@ export async function middleware(request: NextRequest) {
     if (onlyGuestRoutes.includes(request.nextUrl.pathname)) {
         const token = request.cookies.get("access_token");
 
-        if (token) {
+        if (!token?.value) {
+            return NextResponse.next();
+        }
+
+        try {
+            await getCurrentUser(token.value);
+
             return NextResponse.redirect(new URL("/dashboard", request.url));
+        }
+        catch (error) {
+            console.log(error);
+
+            return NextResponse.next();
         }
     }
 }
