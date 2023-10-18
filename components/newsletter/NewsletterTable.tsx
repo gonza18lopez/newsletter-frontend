@@ -44,6 +44,7 @@ export default function NewsletterTable() {
                         key={newsletter.id}
                         id={newsletter.id}
                         name={newsletter.name}
+                        isSent={newsletter.isSent}
                         sendAt={newsletter.sendAt}
                         recipients={newsletter.recipients}
                     />

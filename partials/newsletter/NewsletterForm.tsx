@@ -11,6 +11,8 @@ import axios from "@/utils/axios";
 import { useNewsletters } from "@/hooks/newsletter";
 import { useRouter } from "next/navigation";
 import { DateTimePicker } from "@mantine/dates";
+import { useRecipients } from "@/hooks/recipient";
+import Editor from "@/components/Editor";
 
 type NewsletterFormProps = {
     defaultValues?: NewsletterFormData;
@@ -23,6 +25,7 @@ export default function NewsletterForm({
 }: NewsletterFormProps) {
     const router = useRouter();
     const { mutate: updateNewslettersTable } = useNewsletters();
+    const { recipients, isLoading: isLoadingRecipients } = useRecipients();
     const {
         control,
         register,
@@ -42,7 +45,7 @@ export default function NewsletterForm({
         formData.append("attachment", data.attachment);
 
         try {
-            const request = await axios.post(
+            await axios.post(
                 "/api/newsletter/create",
                 formData
             );
@@ -124,7 +127,10 @@ export default function NewsletterForm({
                         name="recipients"
                         render={({ field }) => (
                             <MultiSelect
-                                data={["a@a.com", "b@b.com"]}
+                                data={isLoadingRecipients ? [] : recipients?.map((recipient: any) => ({
+                                    value: recipient.id.toString(),
+                                    label: recipient.email,
+                                }))}
                                 classNames={{
                                     input: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
                                 }}
@@ -141,16 +147,15 @@ export default function NewsletterForm({
                     >
                         Description
                     </label>
-                    <textarea
-                        id="body"
-                        rows={4}
-                        className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                        placeholder="Write newsletter content here"
-                        {...register("body", {
-                            required: "This field is required.",
-                            min: 4,
-                        })}
-                    ></textarea>
+                    <Controller
+                        name="body"
+                        control={control}
+                        render={({ field: { onChange } }) => (
+                            <Editor
+                                onChange={onChange}
+                            />
+                        )}
+                    />
                 </div>
                 <div className="sm:col-span-2">
                     <label

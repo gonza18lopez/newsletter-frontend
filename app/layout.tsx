@@ -1,6 +1,7 @@
 import "@mantine/core/styles.css";
-import '@mantine/notifications/styles.css';
-import '@mantine/dates/styles.css';
+import "@mantine/notifications/styles.css";
+import "@mantine/dates/styles.css";
+import "@mantine/tiptap/styles.css";
 import "@/assets/stylesheets/app.css";
 
 import type { Metadata } from "next";
@@ -19,9 +20,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className="antialiased">
-                <Providers>
-                    {children}
-                </Providers>
+                <Providers>{children}</Providers>
             </body>
         </html>
     );
